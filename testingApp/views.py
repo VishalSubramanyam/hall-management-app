@@ -67,6 +67,7 @@ def view_complaints(request):
             return redirect('access-denied')
 
 
+@login_required
 def file_atr(request):
     if request.method == 'POST' and request.user.profile.role == 'warden':
         form = ATRUploadForm(request.POST, request.FILES)
@@ -82,6 +83,18 @@ def file_atr(request):
 
     else:
         return redirect('access-denied')
+
+
+@login_required
+def hall_fees(request):
+    if request.method == 'POST':
+        if request.user == 'student':
+            request.user.student
+    elif request.method == 'GET':
+        rent_owed = request.user.student.rent_amount
+        surcharges = request.user.student.surcharges
+        return render(request, 'fees-dues/hall-fees.html', {'rent_owed': rent_owed, 'surcharges_owed': surcharges,
+                                                            'total_money_owed': rent_owed + surcharges})
 
 
 def under_construction(request):

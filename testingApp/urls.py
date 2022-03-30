@@ -12,7 +12,7 @@ urlpatterns = [
     ), name='login-page'),
     path('logout', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout-page'),
     path('dashboard', views.dashboard, name='dashboard-page'),
-    path('hall-fees', views.under_construction, name='hall-fees'),
+    path('hall-fees', views.hall_fees, name='hall-fees'),
     path('mess-dues', views.under_construction, name='mess-dues'),
     path('file-complaint', views.file_complaint, name='file-complaint'),
     path('view-complaints', views.view_complaints, name='view-complaints'),

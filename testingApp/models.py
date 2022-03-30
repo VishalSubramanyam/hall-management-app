@@ -28,6 +28,9 @@ class Hall(models.Model):
     warden = models.OneToOneField(User, null=True,
                                   on_delete=models.SET_NULL)  # can delete wardens without affecting Halls
 
+    def __str__(self):
+        return self.hall_name.__str__()
+
 
 class Student(models.Model):
     student = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -35,6 +38,9 @@ class Student(models.Model):
     mess_fees = models.DecimalField(max_digits=10, decimal_places=2)
     rent_amount = models.DecimalField(max_digits=10, decimal_places=2)
     surcharges = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return str(self.student.username)
 
 
 def get_image_upload_path(instance, filename):
