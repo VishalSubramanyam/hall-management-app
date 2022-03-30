@@ -17,5 +17,7 @@ urlpatterns = [
     path('file-complaint', views.file_complaint, name='file-complaint'),
     path('view-complaints', views.view_complaints, name='view-complaints'),
     path('file-atr', views.file_atr, name='file-atr'),
-    path('access-denied', views.access_denied, name='access-denied')
+    path('access-denied', views.access_denied, name='access-denied'),
+    path('expense-report', views.expense_report, name='expense-report')
+
 ]

@@ -61,8 +61,6 @@ def view_complaints(request):
             atr_form = ATRUploadForm()
             return render(request, 'view-complaints.html',
                           {'complaints': relevantComplaints, 'role': request.user.profile.role, 'atr_form': atr_form})
-        elif request.user.profile.role == 'hall_clerk':
-            pass
         elif request.user.profile.role == 'mess_manager':
             relevantHalls = Hall.objects.filter(mess_manager=request.user)
             relevantComplaints = Complaint.objects.filter(complaint_type='mess').filter(
@@ -97,7 +95,9 @@ def hall_fees(request):
             cur_student = request.user.student
             cur_student.rent_amount = 0
             cur_student.surcharges = 0
+            cur_student.hall.running_account += cur_student.rent_amount + cur_student.surcharges
             cur_student.save(update_fields=['rent_amount', 'surcharges'])
+            cur_student.hall.save(update_fields=['running_account'])
             messages.success(request, 'Hall fees paid successfully!')
             return redirect('hall-fees')
         elif request.user.profile.role == 'warden':
@@ -142,10 +142,13 @@ def mess_dues(request):
             case 'mess_manager':
                 form = MessFeesForm()
                 return render(request, 'fees-dues/mess-dues-manager.html', {'form': form})
+            case default:
+                return render(request, 'users/access_denied.html')
     elif request.method == 'POST':
         match cur_user.profile.role:
             case 'warden':
-                pass
+                cur_user.hall.running_account -= cur_user.hall.mess_dues
+                cur_user.hall.mess_dues = 0
             case 'student':
                 # money is paid to the hall, which in turn pays the mess manager
                 cur_user.student.hall.running_account += cur_user.student.mess_fees
@@ -168,7 +171,7 @@ def mess_dues(request):
 
                     # this money is owed to the mess manager by the hall.
                     # the hall warden should collect the money from the student to balance the books.
-                    cur_student.hall.mess_due += form.cleaned_data['mess_fees']
+                    cur_student.hall.mess_dues += form.cleaned_data['mess_fees']
                     cur_student.save(update_fields=['mess_fees'])
 
                     messages.success(request, 'Mess fees demanded successfully!')
@@ -176,6 +179,17 @@ def mess_dues(request):
                 else:
                     messages.error(request, 'Invalid input. Try again.')
                     return redirect('mess-dues')
+            case default:
+                return render(request, 'users/access_denied.html')
+
+
+@login_required
+def expense_report(request):
+    if request.user.profile.role != 'warden':
+        return render(request, 'users/access_denied.html')
+    else:
+        return render(request, 'fees-dues/hall-expense-report.html',
+                      {'mess_dues': request.user.hall.mess_dues, 'running_account': request.user.hall.running_account})
 
 
 def under_construction(request):
