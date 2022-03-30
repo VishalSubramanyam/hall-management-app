@@ -68,3 +68,19 @@ class ATRUploadForm(forms.Form):
     def __self__(self, *args, **kwargs):
         super(ATRUploadForm, self).__init__(*args, **kwargs)
         self.fields['action_taken_report'].widget.attrs['class'] = 'form-control'
+
+
+class ChargeFeesForm(forms.Form):
+    rentCap1 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
+        attrs={'class': 'form-control', 'placeholder': 'Capacity 1 Rent'}))
+    rentCap2 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
+        attrs={'class': 'form-control', 'placeholder': 'Capacity 2 Rent'}))
+    rentCap3 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
+        attrs={'class': 'form-control', 'placeholder': 'Capacity 3 Rent'}))
+    rentCap4 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
+        attrs={'class': 'form-control', 'placeholder': 'Capacity 4 Rent'}))
+    surcharges = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
+        attrs={'class': 'form-control', 'placeholder': 'Surcharges'}))
+
+    def __self__(self, *args, **kwargs):
+        super(ChargeFeesForm, self).__init__(*args, **kwargs)

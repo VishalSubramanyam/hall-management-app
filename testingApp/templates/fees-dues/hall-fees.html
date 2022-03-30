@@ -27,14 +27,41 @@
         </div>
     </div>
     <div class="card">
-    <div class="card-header">
-        Payment Gateway
-    </div>
-    <div class="card-body">
-        <form method="POST">
-            <input type="text" value={{ total_money_owed }} disabled>
-            <button type="submit" class="btn btn-primary">Pay Dues</button>
-        </form>
-    </div>
+        <div class="card-header">
+            Payment Gateway
+        </div>
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    {% for err in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ err|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if messages %}
+
+                    {% for message in messages %}
+                        <div class="alert alert-success">
+                            <strong>{{ message|escape }}</strong>
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+                <input type="text" value={{ total_money_owed }} disabled>
+                <button type="submit" class="btn btn-primary">Pay Dues</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

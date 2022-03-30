@@ -1,8 +1,9 @@
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegistrationForm, ComplaintForm, ATRUploadForm
+from .forms import RegistrationForm, ComplaintForm, ATRUploadForm, ChargeFeesForm
 from .models import Complaint, Student, Hall, User
 
 
@@ -88,13 +89,41 @@ def file_atr(request):
 @login_required
 def hall_fees(request):
     if request.method == 'POST':
-        if request.user == 'student':
-            request.user.student
+        if request.user.profile.role == 'student':
+            cur_student = request.user.student
+            cur_student.rent_amount = 0
+            cur_student.surcharges = 0
+            cur_student.save(update_fields=['rent_amount', 'surcharges'])
+            messages.success(request, 'Hall fees paid successfully!')
+            return redirect('hall-fees')
+        elif request.user.profile.role == 'warden':
+            form = ChargeFeesForm(request.POST)
+            if form.is_valid():
+                cap1Students = Student.objects.filter(hall=request.user.hall).filter(room__capacity=1)
+                cap2Students = Student.objects.filter(hall=request.user.hall).filter(room__capacity=2)
+                cap3Students = Student.objects.filter(hall=request.user.hall).filter(room__capacity=3)
+                cap4Students = Student.objects.filter(hall=request.user.hall).filter(room__capacity=4)
+                cap1Students.update(rent_amount=F('rent_amount') + form.cleaned_data['rentCap1'])
+                cap2Students.update(rent_amount=F('rent_amount') + form.cleaned_data['rentCap2'])
+                cap3Students.update(rent_amount=F('rent_amount') + form.cleaned_data['rentCap3'])
+                cap4Students.update(rent_amount=F('rent_amount') + form.cleaned_data['rentCap4'])
+                Student.objects.filter(hall=request.user.hall).update(
+                    surcharges=F('surcharges') + form.cleaned_data['surcharges'])
+                messages.success(request, 'Rent and surcharges have been successfully demanded')
+                return redirect('hall-fees')
+            else:
+                messages.error(request, 'Something went wrong. Try again later!')
+                return redirect('hall-fees')
+
     elif request.method == 'GET':
-        rent_owed = request.user.student.rent_amount
-        surcharges = request.user.student.surcharges
-        return render(request, 'fees-dues/hall-fees.html', {'rent_owed': rent_owed, 'surcharges_owed': surcharges,
-                                                            'total_money_owed': rent_owed + surcharges})
+        if request.user.profile.role == 'student':
+            rent_owed = request.user.student.rent_amount
+            surcharges = request.user.student.surcharges
+            return render(request, 'fees-dues/hall-fees.html', {'rent_owed': rent_owed, 'surcharges_owed': surcharges,
+                                                                'total_money_owed': rent_owed + surcharges})
+        elif request.user.profile.role == 'warden':
+            form = ChargeFeesForm()
+            return render(request, 'fees-dues/hall-fees-warden.html', {'form': form})
 
 
 def under_construction(request):

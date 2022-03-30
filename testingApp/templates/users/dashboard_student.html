@@ -7,8 +7,7 @@
         <div class="card-body btn-group-vertical">
             <a href="{% url 'file-complaint' %}" class="btn btn-block btn-outline-primary">File complaint</a>
             <a href="{% url 'view-complaints' %}" class="btn btn-block btn-outline-primary">View complaints</a>
-            <!-- <input class="btn btn-block btn-outline-primary " value="File complaint">
-            <input class="btn btn-block btn-outline-primary" value="View complaints"> -->
+
         </div>
     </div>
     <div class="card">
@@ -16,11 +15,9 @@
             Fees and Dues
         </div>
         <div class="card-body btn-group-vertical">
-            <button type="button" class="btn btn-block btn-outline-primary">View hall related fees</button>
-            <button type="button" class="btn btn-block btn-outline-primary">View mess charges</button>
+            <a href="{% url 'hall-fees' %}" class="btn btn-block btn-outline-primary">View hall related fees</a>
+            <a href="{% url 'mess-dues' %}" class="btn btn-block btn-outline-primary">View mess charges</a>
 
-            <!-- <input class="btn btn-block btn-outline-primary " value="View hall related fees">
-            <input class="btn btn-block btn-outline-primary" value="View mess charges"> -->
         </div>
     </div>
 {% endblock %}
