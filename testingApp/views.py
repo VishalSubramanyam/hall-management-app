@@ -93,9 +93,9 @@ def hall_fees(request):
     if request.method == 'POST':
         if request.user.profile.role == 'student':
             cur_student = request.user.student
+            cur_student.hall.running_account += cur_student.rent_amount + cur_student.surcharges
             cur_student.rent_amount = 0
             cur_student.surcharges = 0
-            cur_student.hall.running_account += cur_student.rent_amount + cur_student.surcharges
             cur_student.save(update_fields=['rent_amount', 'surcharges'])
             cur_student.hall.save(update_fields=['running_account'])
             messages.success(request, 'Hall fees paid successfully!')
@@ -118,6 +118,8 @@ def hall_fees(request):
             else:
                 messages.error(request, 'Something went wrong. Try again later!')
                 return redirect('hall-fees')
+        else:
+            return redirect('access-denied')
 
     elif request.method == 'GET':
         if request.user.profile.role == 'student':
@@ -128,6 +130,8 @@ def hall_fees(request):
         elif request.user.profile.role == 'warden':
             form = ChargeFeesForm()
             return render(request, 'fees-dues/hall-fees-warden.html', {'form': form})
+        else:
+            return redirect('access-denied')
 
 
 @login_required
