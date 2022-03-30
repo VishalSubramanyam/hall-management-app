@@ -1,0 +1,12 @@
+{% extends 'users/dashboard_base.html' %}
+{% block dashboard_contents %}
+    <div class="card">
+        <div class="d-flex card-header justify-content-center">
+            HMC Related Matters
+        </div>
+        <div class="card-body btn-group-vertical">
+            <a href="{% url 'file-complaint' %}" class="btn btn-block btn-outline-primary">File complaint</a>
+            <a href="{% url 'view-complaints' %}" class="btn btn-block btn-outline-primary">View complaints</a>
+        </div>
+    </div>
+{% endblock %}

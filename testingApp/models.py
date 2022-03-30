@@ -13,7 +13,8 @@ class Profile(models.Model):
         ('warden', 'Warden'),
         ('hall_clerk', 'Hall Clerk'),
         ('hmc_chairman', 'HMC Chairman'),
-        ('mess_manager', 'Mess Manager')
+        ('mess_manager', 'Mess Manager'),
+        ('admin', 'Administrator')
     ]
     role = models.CharField(
         max_length=30,
@@ -98,3 +99,23 @@ class Complaint(models.Model):
 
     image_upload = models.ImageField(null=True, blank=True, upload_to=_get_image_upload_path)
     action_taken_report = models.FileField(null=True, blank=True, upload_to=_get_atr_upload_path)
+
+
+class HMCEmployee(models.Model):
+    name = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    dob = models.DateField()
+    email = models.EmailField()
+    phone = models.PositiveIntegerField(max_length=15)
+    address = models.CharField(max_length=300)
+    monthly_salary = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
+# only administrators can add these expenses.
+# it is assumed that admins are working under the HMC
+class HMCPettyExpense(models.Model):
+    description = models.CharField(max_length=50)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
