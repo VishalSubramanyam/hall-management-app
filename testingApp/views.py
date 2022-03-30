@@ -4,7 +4,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import *
-from .models import Complaint, Student, Hall, User
+from .models import *
+import datetime
+
+today = datetime.date.today()
 
 
 # Create your views here.
@@ -194,6 +197,30 @@ def expense_report(request):
     else:
         return render(request, 'fees-dues/hall-expense-report.html',
                       {'mess_dues': request.user.hall.mess_dues, 'running_account': request.user.hall.running_account})
+
+
+@login_required
+def petty_expenses(request):
+    if request.user.profile.role != 'admin':
+        return redirect('access-denied')
+    else:
+        RelevantExpenses = HMCPettyExpense.objects.filter(date_of_occurrence__month=today.month)
+        sum = 0
+        for expense in RelevantExpenses:
+            sum += expense.cost
+        return render(request, 'petty-expenses.html', {'expenses': RelevantExpenses, 'sum': sum})
+
+
+@login_required
+def view_hmc_employees(request):
+    if request.user.profile.role != 'admin':
+        return redirect('access-denied')
+    else:
+        employees = HMCEmployee.objects.all()
+        sum = 0
+        for employee in employees:
+            sum += employee.monthly_salary
+        return render(request, 'view-hmc-employees.html', {'employees': employees, 'sum': sum})
 
 
 def under_construction(request):

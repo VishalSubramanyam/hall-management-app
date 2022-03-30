@@ -18,6 +18,7 @@ urlpatterns = [
     path('view-complaints', views.view_complaints, name='view-complaints'),
     path('file-atr', views.file_atr, name='file-atr'),
     path('access-denied', views.access_denied, name='access-denied'),
-    path('expense-report', views.expense_report, name='expense-report')
-
+    path('expense-report', views.expense_report, name='expense-report'),
+    path('petty-expenses', views.petty_expenses, name='petty-expenses'),
+    path('view-hmc-employees', views.view_hmc_employees, name='view-hmc-employees')
 ]

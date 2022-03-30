@@ -119,3 +119,4 @@ class HMCEmployee(models.Model):
 class HMCPettyExpense(models.Model):
     description = models.CharField(max_length=50)
     cost = models.DecimalField(max_digits=10, decimal_places=2)
+    date_of_occurrence = models.DateField(auto_now_add=True)
