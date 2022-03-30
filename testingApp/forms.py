@@ -32,9 +32,12 @@ class RegistrationForm(UserCreationForm):
         user = super(RegistrationForm, self).save(commit=True)
         user_profile = Profile(user=user, role=self.cleaned_data['role'])
         user_profile.save()
-        user_student = Student(student=user, hall=None, mess_fees=0, rent_amount=0, surcharges=0)
-        user_student.save()
-        return user, user_profile, user_student
+        if user_profile.role == 'student':
+            user_student = Student(student=user, hall=None, mess_fees=0, rent_amount=0, surcharges=0)
+            user_student.save()
+            return user, user_profile, user_student
+        else:
+            return user, user_profile
 
 
 class LoginForm(AuthenticationForm):

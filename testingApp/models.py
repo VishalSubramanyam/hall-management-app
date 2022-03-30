@@ -22,11 +22,18 @@ class Profile(models.Model):
         default='student'
     )
 
+    def __str__(self):
+        return str(self.user.username)
+
 
 class Hall(models.Model):
     hall_name = models.CharField(max_length=100)
     warden = models.OneToOneField(User, null=True,
                                   on_delete=models.SET_NULL)  # can delete wardens without affecting Halls
+    mess_manager = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='+')
+    mess_dues = models.DecimalField(max_digits=10, decimal_places=2)
+    grant_received = models.DecimalField(max_digits=10, decimal_places=2)
+    daily_wage_expenses = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.hall_name.__str__()
@@ -41,6 +48,17 @@ class Student(models.Model):
 
     def __str__(self):
         return str(self.student.username)
+
+class Room(models.Model):
+    room_id = models.CharField(max_length=10)
+    CAPACITIES = [
+        (1, 'One'),
+        (2, 'Two'),
+        (3, 'Three'),
+        (4, 'Four')
+    ]
+    capacity = models.IntegerField(choices=CAPACITIES, default=2)
+    hall = models.ForeignKey(Hall, null=False, on_delete=models.CASCADE)
 
 
 def get_image_upload_path(instance, filename):
