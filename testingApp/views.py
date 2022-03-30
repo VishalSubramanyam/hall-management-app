@@ -136,7 +136,7 @@ def mess_dues(request):
     if request.method == 'GET':
         match cur_user.profile.role:
             case 'warden':
-                pass
+                return render(request, 'fees-dues/mess-dues-warden.html', {'mess_dues': cur_user.hall.mess_due})
             case 'student':
                 return render(request, 'fees-dues/mess-dues.html', {'mess_dues': cur_user.student.mess_fees})
             case 'mess_manager':

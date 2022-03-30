@@ -36,17 +36,14 @@
                 {% endif %}
                 <div class="input-group form-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-                    {{ form.student }}
-                </div>
-                <div class="input-group form-group">
-                    <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                     </div>
-                    {{ form.mess_fees }}
+                    <input class="form-control" type="number" value="{{ mess_dues }}" disabled>
                 </div>
-                <button type="submit" class="btn btn-primary">Charge fees</button>
+
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Settle mess dues</button>
+                </div>
             </form>
         </div>
     </div>
