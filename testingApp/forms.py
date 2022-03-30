@@ -84,3 +84,16 @@ class ChargeFeesForm(forms.Form):
 
     def __self__(self, *args, **kwargs):
         super(ChargeFeesForm, self).__init__(*args, **kwargs)
+
+
+class MessFeesForm(forms.Form):
+    student = forms.CharField(max_length=150)
+    mess_fees = forms.DecimalField(max_digits=10, decimal_places=2)
+
+    def __self__(self, *args, **kwargs):
+        super(ChargeFeesForm, self).__init__(*args, **kwargs)
+        self.fields['student'].widget.attrs['class'] = 'form-control'
+        self.fields['student'].widget.attrs['placeholder'] = 'Student Roll Number'
+
+        self.fields['mess_fees'].widget.attrs['class'] = 'form-control'
+        self.fields['mess_fees'].widget.attrs['placeholder'] = 'Mess Fees'

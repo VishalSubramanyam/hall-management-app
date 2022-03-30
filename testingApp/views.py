@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegistrationForm, ComplaintForm, ATRUploadForm, ChargeFeesForm
+from .forms import *
 from .models import Complaint, Student, Hall, User
 
 
@@ -124,6 +124,49 @@ def hall_fees(request):
         elif request.user.profile.role == 'warden':
             form = ChargeFeesForm()
             return render(request, 'fees-dues/hall-fees-warden.html', {'form': form})
+
+
+@login_required
+def mess_dues(request):
+    cur_user = request.user
+    if request.method == 'GET':
+        match cur_user.profile.role:
+            case 'warden':
+                pass
+            case 'student':
+                return render(request, 'fees-dues/mess-dues.html', {'mess_dues': cur_user.student.mess_fees})
+            case 'mess_manager':
+                form = MessFeesForm()
+                return render(request, 'fees-dues/mess-dues-manager.html', {'form': form})
+    elif request.method == 'POST':
+        match cur_user.profile.role:
+            case 'warden':
+                pass
+            case 'student':
+                cur_user.student.hall.running_account = cur_user.student.hall.running_account + cur_user.student.mess_fees
+                cur_user.student.mess_fees = 0
+                cur_user.student.hall.save(update_fields=['running_account'])
+                cur_user.student.save(update_fields=['mess_fees'])
+                messages.success(request, 'Paid successfully!')
+                return redirect('mess-dues')
+            case 'mess_manager':
+                form = MessFeesForm(request.POST)
+                if form.is_valid():
+                    cur_student = Student.objects.get(student__username=form.cleaned_data['student'])
+                    print(cur_student)
+                    if not cur_student:
+                        messages.error(request, "No such student exists")
+                        return redirect('mess-dues')
+                    if cur_student.hall.mess_manager != request.user:
+                        messages.error(request, "This student isn't served by you")
+                        return redirect('mess-dues')
+                    cur_student.mess_fees += form.cleaned_data['mess_fees']
+                    cur_student.save(update_fields=['mess_fees'])
+                    messages.success(request, 'Mess fees demanded successfully!')
+                    return redirect('mess-dues')
+                else:
+                    messages.error('Invalid input. Try again.')
+                    return redirect('mess-dues')
 
 
 def under_construction(request):
