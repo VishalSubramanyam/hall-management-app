@@ -20,6 +20,7 @@
                 <thead>
                 <tr>
                     <th scope="col">Date</th>
+                    <th scope="col">Complainant</th>
                     <th scope="col">Type</th>
                     <th scope="col">Description</th>
                     <th scope="col">Action Taken Report</th>
@@ -29,10 +30,11 @@
                 {% for complaint in complaints %}
                     <tr>
                         <td>{{ complaint.date_filed }}</td>
+                        <td>{{ complaint.complainant.username }}</td>
                         <td>{{ complaint.complaint_type }}</td>
                         <td>{{ complaint.description }}</td>
                         <td>
-                            {% if role == 'student' or role == 'hall_clerk' %}
+                            {% if role == 'student' or role == 'hall_clerk' or role == 'mess_manager'%}
                                 {% if not complaint.action_taken_report %}
                                     Report unavailable
                                 {% else %}

@@ -1,6 +1,10 @@
+from decimal import Decimal
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.validators import MinValueValidator
+
 from .models import Profile, Complaint, Student
 
 
@@ -71,16 +75,21 @@ class ATRUploadForm(forms.Form):
 
 
 class ChargeFeesForm(forms.Form):
-    rentCap1 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
-        attrs={'class': 'form-control', 'placeholder': 'Capacity 1 Rent'}))
-    rentCap2 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
-        attrs={'class': 'form-control', 'placeholder': 'Capacity 2 Rent'}))
-    rentCap3 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
-        attrs={'class': 'form-control', 'placeholder': 'Capacity 3 Rent'}))
-    rentCap4 = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
-        attrs={'class': 'form-control', 'placeholder': 'Capacity 4 Rent'}))
-    surcharges = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(
-        attrs={'class': 'form-control', 'placeholder': 'Surcharges'}))
+    rentCap1 = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                  widget=forms.NumberInput(
+                                      attrs={'class': 'form-control', 'placeholder': 'Capacity 1 Rent'}))
+    rentCap2 = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                  widget=forms.NumberInput(
+                                      attrs={'class': 'form-control', 'placeholder': 'Capacity 2 Rent'}))
+    rentCap3 = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                  widget=forms.NumberInput(
+                                      attrs={'class': 'form-control', 'placeholder': 'Capacity 3 Rent'}))
+    rentCap4 = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                  widget=forms.NumberInput(
+                                      attrs={'class': 'form-control', 'placeholder': 'Capacity 4 Rent'}))
+    surcharges = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                    widget=forms.NumberInput(
+                                        attrs={'class': 'form-control', 'placeholder': 'Surcharges'}))
 
     def __self__(self, *args, **kwargs):
         super(ChargeFeesForm, self).__init__(*args, **kwargs)
@@ -88,7 +97,7 @@ class ChargeFeesForm(forms.Form):
 
 class MessFeesForm(forms.Form):
     student = forms.CharField(max_length=150)
-    mess_fees = forms.DecimalField(max_digits=10, decimal_places=2)
+    mess_fees = forms.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
 
     def __self__(self, *args, **kwargs):
         super(ChargeFeesForm, self).__init__(*args, **kwargs)

@@ -33,6 +33,7 @@ class Hall(models.Model):
     grant_received = models.DecimalField(max_digits=10, default=0, decimal_places=2)
     daily_wage_expenses = models.DecimalField(max_digits=10, default=0, decimal_places=2)
     running_account = models.DecimalField(max_digits=10, default=0, decimal_places=2)
+    mess_due = models.DecimalField(max_digits=10, default=0, decimal_places=2)
 
     def __str__(self):
         return self.hall_name.__str__()

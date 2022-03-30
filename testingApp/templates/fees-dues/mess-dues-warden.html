@@ -3,11 +3,11 @@
 {% block dashboard_contents %}
     <div class="card">
         <div class="card-header">
-            Charge fees
+            Charge mess fees
         </div>
         <div class="card-body">
 
-            <form method="POST" action="{% url 'hall-fees' %}">
+            <form method="POST" action="{% url 'mess-dues' %}">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
                     {% for err in form.non_field_errors %}
@@ -36,33 +36,15 @@
                 {% endif %}
                 <div class="input-group form-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-money-bill"></i></span>
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
                     </div>
-                    {{ form.rentCap1 }}
+                    {{ form.student }}
                 </div>
                 <div class="input-group form-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-money-bill"></i></span>
+                        <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                     </div>
-                    {{ form.rentCap2 }}
-                </div>
-                <div class="input-group form-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-money-bill"></i></span>
-                    </div>
-                    {{ form.rentCap3 }}
-                </div>
-                <div class="input-group form-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-money-bill"></i></span>
-                    </div>
-                    {{ form.rentCap4 }}
-                </div>
-                <div class="input-group form-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-money-bill"></i></span>
-                    </div>
-                    {{ form.surcharges }}
+                    {{ form.mess_fees }}
                 </div>
                 <button type="submit" class="btn btn-primary">Charge fees</button>
             </form>

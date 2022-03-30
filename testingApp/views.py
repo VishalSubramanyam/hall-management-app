@@ -35,7 +35,6 @@ def file_complaint(request):
     if request.user.profile.role != 'student':
         return redirect('access-denied')
     elif request.method == 'POST':
-        print(request.FILES)
         form = ComplaintForm(request.POST, request.FILES)
         if form.is_valid():
             complaint = form.save(commit=False)
@@ -62,8 +61,13 @@ def view_complaints(request):
             atr_form = ATRUploadForm()
             return render(request, 'view-complaints.html',
                           {'complaints': relevantComplaints, 'role': request.user.profile.role, 'atr_form': atr_form})
-        elif request.user.profile.role == 'hall-clerk':
+        elif request.user.profile.role == 'hall_clerk':
             pass
+        elif request.user.profile.role == 'mess_manager':
+            relevantHalls = Hall.objects.filter(mess_manager=request.user)
+            relevantComplaints = Complaint.objects.filter(complaint_type='mess').filter(
+                complainant__student__hall__in=relevantHalls)
+            return render(request, 'view-complaints.html', {'complaints': relevantComplaints, 'role': 'mess_manager'})
         else:
             return redirect('access-denied')
 
@@ -143,9 +147,10 @@ def mess_dues(request):
             case 'warden':
                 pass
             case 'student':
-                cur_user.student.hall.running_account = cur_user.student.hall.running_account + cur_user.student.mess_fees
-                cur_user.student.mess_fees = 0
-                cur_user.student.hall.save(update_fields=['running_account'])
+                # money is paid to the hall, which in turn pays the mess manager
+                cur_user.student.hall.running_account += cur_user.student.mess_fees
+                cur_user.student.mess_fees = 0  # has paid the fees
+                cur_user.student.hall.save(update_fields=['running_account'])  # Update database
                 cur_user.student.save(update_fields=['mess_fees'])
                 messages.success(request, 'Paid successfully!')
                 return redirect('mess-dues')
@@ -153,7 +158,6 @@ def mess_dues(request):
                 form = MessFeesForm(request.POST)
                 if form.is_valid():
                     cur_student = Student.objects.get(student__username=form.cleaned_data['student'])
-                    print(cur_student)
                     if not cur_student:
                         messages.error(request, "No such student exists")
                         return redirect('mess-dues')
@@ -161,11 +165,16 @@ def mess_dues(request):
                         messages.error(request, "This student isn't served by you")
                         return redirect('mess-dues')
                     cur_student.mess_fees += form.cleaned_data['mess_fees']
+
+                    # this money is owed to the mess manager by the hall.
+                    # the hall warden should collect the money from the student to balance the books.
+                    cur_student.hall.mess_due += form.cleaned_data['mess_fees']
                     cur_student.save(update_fields=['mess_fees'])
+
                     messages.success(request, 'Mess fees demanded successfully!')
                     return redirect('mess-dues')
                 else:
-                    messages.error('Invalid input. Try again.')
+                    messages.error(request, 'Invalid input. Try again.')
                     return redirect('mess-dues')
 
 
